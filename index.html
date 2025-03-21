@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelada dos Amigos</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #admin { display: none; margin-top: 20px; }
+        .hidden { display: none; }
+        .team { margin-top: 20px; padding: 10px; border: 1px solid black; display: inline-block; width: 45%; vertical-align: top; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, select { padding: 5px; margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; }
+        #gameInfo { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Organizador de Pelada</h2>
+
+    <div id="gameInfo">
+        <p><strong>Dia:</strong> <span id="gameDate"></span></p>
+        <p><strong>Horário:</strong> <span id="gameTime"></span></p>
+        <p><strong>Local:</strong> <span id="gameLocation"></span></p>
+        <p><strong>Número de jogadores:</strong> <span id="playerLimit"></span></p>
+    </div>
+
+    <h3>Jogadores Confirmados</h3>
+    <ul id="players"></ul>
+
+    <h3>Lista de Espera</h3>
+    <ul id="waitingList"></ul>
+
+    <button onclick="sortTeams()">Sortear Times</button>
+
+    <div id="teams" class="hidden">
+        <div class="team">
+            <h3>Time 1</h3>
+            <ul id="team1"></ul>
+        </div>
+        <div class="team">
+            <h3>Time 2</h3>
+            <ul id="team2"></ul>
+        </div>
+    </div>
+
+    <div id="admin">
+        <h3>Configurar Jogo</h3>
+        <label>Dia: <input type="date" id="inputDate"></label><br>
+        <label>Horário: <input type="time" id="inputTime"></label><br>
+        <label>Local: <input type="text" id="inputLocation"></label><br>
+        <label>Número de jogadores: <input type="number" id="inputLimit" min="2"></label><br>
+
+        <h3>Adicionar Jogadores</h3>
+        <input type="text" id="playerName" placeholder="Nome do jogador">
+        <button onclick="addPlayer()">Adicionar</button>
+
+        <button onclick="saveGame()">Salvar Jogo</button>
+    </div>
+
+    <script>
+        let players = [];
+        let waitingList = [];
+        let playerLimit = 10;
+        const adminCode = "1234";
+
+        function addPlayer() {
+            const name = document.getElementById("playerName").value.trim();
+            if (!name) return;
+            if (players.length < playerLimit) {
+                players.push(name);
+            } else {
+                waitingList.push(name);
+            }
+            updateLists();
+            document.getElementById("playerName").value = "";
+        }
+
+        function updateLists() {
+            document.getElementById("players").innerHTML = players.map((p, index) => `<li>${p} <button onclick="removePlayer('players', ${index})">Remover</button></li>`).join("");
+            document.getElementById("waitingList").innerHTML = waitingList.map((p, index) => `<li>${p} <button onclick="removePlayer('waitingList', ${index})">Remover</button></li>`).join("");
+        }
+
+        function removePlayer(listType, index) {
+            if (listType === "players") {
+                players.splice(index, 1);
+            } else {
+                waitingList.splice(index, 1);
+            }
+            updateLists();
+        }
+
+        function sortTeams() {
+            if (players.length < playerLimit) {
+                alert("Ainda não há jogadores suficientes!");
+                return;
+            }
+            const shuffled = [...players].sort(() => Math.random() - 0.5);
+            const team1 = shuffled.slice(0, shuffled.length / 2);
+            const team2 = shuffled.slice(shuffled.length / 2);
+
+            document.getElementById("team1").innerHTML = team1.map(p => `<li>${p}</li>`).join("");
+            document.getElementById("team2").innerHTML = team2.map(p => `<li>${p}</li>`).join("");
+
+            document.getElementById("teams").classList.remove("hidden");
+        }
+
+        function saveGame() {
+            document.getElementById("gameDate").innerText = document.getElementById("inputDate").value;
+            document.getElementById("gameTime").innerText = document.getElementById("inputTime").value;
+            document.getElementById("gameLocation").innerText = document.getElementById("inputLocation").value;
+            playerLimit = parseInt(document.getElementById("inputLimit").value) || 10;
+            document.getElementById("playerLimit").innerText = playerLimit;
+        }
+
+        function checkAdmin() {
+            const code = prompt("Digite o código de administrador:");
+            if (code === adminCode) {
+                document.getElementById("admin").style.display = "block";
+            }
+        }
+
+        checkAdmin();
+    </script>
+</body>
+</html>
