@@ -92,16 +92,27 @@
         }
 
         function sortTeams() {
-            if (players.length < playerLimit) {
-                alert("Ainda não há jogadores suficientes!");
+            if (players.length < 2) {
+                alert("São necessários pelo menos 2 jogadores para formar times.");
                 return;
             }
-            const shuffled = [...players].sort(() => Math.random() - 0.5);
-            const team1 = shuffled.slice(0, shuffled.length / 2);
-            const team2 = shuffled.slice(shuffled.length / 2);
 
-            document.getElementById("team1").innerHTML = team1.map(p => `<li>${p}</li>`).join("");
-            document.getElementById("team2").innerHTML = team2.map(p => `<li>${p}</li>`).join("");
+            const numTeams = 2; // Número de times desejado
+            const shuffled = [...players].sort(() => Math.random() - 0.5);
+            const teams = [];
+
+            for (let i = 0; i < numTeams; i++) {
+                teams.push([]);
+            }
+
+            shuffled.forEach((player, index) => {
+                teams[index % numTeams].push(player);
+            });
+
+            // Exibe os times na tela
+            for (let i = 0; i < numTeams; i++) {
+                document.getElementById(`team${i + 1}`).innerHTML = teams[i].map(p => `<li>${p}</li>`).join("");
+            }
 
             document.getElementById("teams").classList.remove("hidden");
         }
@@ -125,33 +136,3 @@
     </script>
 </body>
 </html>
-<script>
-    
-    function sortTeams() {
-        if (players.length < 2) {
-            alert("São necessários pelo menos 2 jogadores para formar times.");
-            return;
-        }
-
-        const numTeams = 2; // Número de times desejado
-        const shuffled = [...players].sort(() => Math.random() - 0.5);
-        const teams = [];
-
-        for (let i = 0; i < numTeams; i++) {
-            teams.push([]);
-        }
-
-        shuffled.forEach((player, index) => {
-            teams[index % numTeams].push(player);
-        });
-
-        // Exibe os times na tela
-        for (let i = 0; i < numTeams; i++) {
-            document.getElementById(`team${i + 1}`).innerHTML = teams[i].map(p => `<li>${p}</li>`).join("");
-        }
-
-        document.getElementById("teams").classList.remove("hidden");
-    }
-
-    // ... (seu código existente)
-</script>
