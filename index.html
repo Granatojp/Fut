@@ -35,15 +35,7 @@
     <button onclick="sortTeams()">Sortear Times</button>
 
     <div id="teams" class="hidden">
-        <div class="team">
-            <h3>Time 1</h3>
-            <ul id="team1"></ul>
         </div>
-        <div class="team">
-            <h3>Time 2</h3>
-            <ul id="team2"></ul>
-        </div>
-    </div>
 
     <div id="admin">
         <h3>Configurar Jogo</h3>
@@ -92,13 +84,16 @@
         }
 
         function sortTeams() {
-            if (players.length < 2) {
+            // Mescla as listas de jogadores confirmados e lista de espera
+            const allPlayers = [...players, ...waitingList];
+
+            if (allPlayers.length < 2) {
                 alert("São necessários pelo menos 2 jogadores para formar times.");
                 return;
             }
 
-            const numTeams = 2; // Número de times desejado
-            const shuffled = [...players].sort(() => Math.random() - 0.5);
+            const numTeams = Math.ceil(allPlayers.length / playerLimit); // Calcula o número de times necessários
+            const shuffled = allPlayers.sort(() => Math.random() - 0.5);
             const teams = [];
 
             for (let i = 0; i < numTeams; i++) {
@@ -109,8 +104,16 @@
                 teams[index % numTeams].push(player);
             });
 
+            // Limpa a exibição anterior dos times
+            document.getElementById("teams").innerHTML = "";
+
             // Exibe os times na tela
             for (let i = 0; i < numTeams; i++) {
+                const teamDiv = document.createElement("div");
+                teamDiv.className = "team";
+                teamDiv.innerHTML = `<h3>Time ${i + 1}</h3><ul id="team${i + 1}"></ul>`;
+                document.getElementById("teams").appendChild(teamDiv);
+
                 document.getElementById(`team${i + 1}`).innerHTML = teams[i].map(p => `<li>${p}</li>`).join("");
             }
 
