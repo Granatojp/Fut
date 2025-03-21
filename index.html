@@ -3,25 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Site</title>
-</head>
-<body>
-    <h1>Bem-vindo ao meu site!</h1>
-    <p>Este é um site hospedado no GitHub Pages.</p>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pelada dos Amigos</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #admin { display: none; }
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #admin { display: none; margin-top: 20px; }
         .hidden { display: none; }
-        .team { margin-top: 20px; padding: 10px; border: 1px solid black; display: inline-block; width: 45%; }
+        .team { margin-top: 20px; padding: 10px; border: 1px solid black; display: inline-block; width: 45%; vertical-align: top; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, select { padding: 5px; margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; }
+        #gameInfo { margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -59,11 +51,11 @@
         <label>Horário: <input type="time" id="inputTime"></label><br>
         <label>Local: <input type="text" id="inputLocation"></label><br>
         <label>Número de jogadores: <input type="number" id="inputLimit" min="2"></label><br>
-        
+
         <h3>Adicionar Jogadores</h3>
         <input type="text" id="playerName" placeholder="Nome do jogador">
         <button onclick="addPlayer()">Adicionar</button>
-        
+
         <button onclick="saveGame()">Salvar Jogo</button>
     </div>
 
@@ -71,24 +63,23 @@
         let players = [];
         let waitingList = [];
         let playerLimit = 10;
-        const adminCode = "1234"; // Código para edição
+        const adminCode = "1234";
 
         function addPlayer() {
             const name = document.getElementById("playerName").value.trim();
             if (!name) return;
             if (players.length < playerLimit) {
                 players.push(name);
-                updateLists();
             } else {
                 waitingList.push(name);
-                updateLists();
             }
+            updateLists();
             document.getElementById("playerName").value = "";
         }
 
         function updateLists() {
-            document.getElementById("players").innerHTML = players.map(p => <li>${p}</li>).join("");
-            document.getElementById("waitingList").innerHTML = waitingList.map(p => <li>${p}</li>).join("");
+            document.getElementById("players").innerHTML = players.map(p => `<li>${p}</li>`).join("");
+            document.getElementById("waitingList").innerHTML = waitingList.map(p => `<li>${p}</li>`).join("");
         }
 
         function sortTeams() {
@@ -100,8 +91,8 @@
             const team1 = shuffled.slice(0, shuffled.length / 2);
             const team2 = shuffled.slice(shuffled.length / 2);
 
-            document.getElementById("team1").innerHTML = team1.map(p => <li>${p}</li>).join("");
-            document.getElementById("team2").innerHTML = team2.map(p => <li>${p}</li>).join("");
+            document.getElementById("team1").innerHTML = team1.map(p => `<li>${p}</li>`).join("");
+            document.getElementById("team2").innerHTML = team2.map(p => `<li>${p}</li>`).join("");
 
             document.getElementById("teams").classList.remove("hidden");
         }
@@ -121,7 +112,7 @@
             }
         }
 
-        checkAdmin(); // Pede o código ao abrir a página
+        checkAdmin();
     </script>
 </body>
 </html>
