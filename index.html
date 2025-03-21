@@ -92,13 +92,14 @@
         }
 
         function sortTeams() {
-            if (players.length < playerLimit) {
-                alert("Ainda não há jogadores suficientes!");
+            if (players.length < 2) {
+                alert("São necessários pelo menos 2 jogadores para formar times.");
                 return;
             }
+
             const shuffled = [...players].sort(() => Math.random() - 0.5);
-            const team1 = shuffled.slice(0, shuffled.length / 2);
-            const team2 = shuffled.slice(shuffled.length / 2);
+            const team1 = shuffled.slice(0, Math.ceil(shuffled.length / 2));
+            const team2 = shuffled.slice(Math.ceil(shuffled.length / 2));
 
             document.getElementById("team1").innerHTML = team1.map(p => `<li>${p}</li>`).join("");
             document.getElementById("team2").innerHTML = team2.map(p => `<li>${p}</li>`).join("");
