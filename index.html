@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futebol TLD e Amigos</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #admin { display: none; margin-top: 20px; }
+        .hidden { display: none; }
+        .team { margin-top: 20px; padding: 10px; border: 1px solid black; display: inline-block; width: 45%; vertical-align: top; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input, select { padding: 5px; margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; }
+        #gameInfo { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Futebol TLD e Amigos</h2>
+
+    <div id="gameInfo">
+        <p><strong>Dia:</strong> <span id="gameDate"></span></p>
+        <p><strong>Horário:</strong> <span id="gameTime"></span></p>
+        <p><strong>Local:</strong> <span id="gameLocation"></span></p>
+    </div>
+
+    <h3>Jogadores Confirmados</h3>
+    <ul id="players"></ul>
+
+    <h3>Lista de Espera</h3>
+    <ul id="waitingList"></ul>
+
+    <button onclick="sortTeams()">Sortear Times</button>
+
+    <div id="teams" class="hidden">
+        </div>
+
+    <div id="admin">
+        <h3>Configurar Jogo</h3>
+        <label>Dia: <input type="date" id="inputDate"></label><br>
+        <label>Horário: <input type="time" id="inputTime"></label><br>
+        <label>Local: <input type="text" id="inputLocation"></label><br>
+
+        <h3>Adicionar Jogadores</h3>
+        <input type="text" id="playerName" placeholder="Nome do jogador">
+        <button onclick="addPlayer()">Adicionar</button>
+
+        <button onclick="saveGame()">Salvar Jogo</button>
+    </div>
+
+    <script>
+        let players = [];
+        let waitingList = [];
+        const adminCode = "1234";
+
+        function addPlayer() {
+            const name = document.getElementById("playerName").value.trim();
+            if (!name) return;
+            players.push(name);
+            updateLists();
+            document.getElementById("playerName").value = "";
+        }
+
+        function updateLists() {
+            document.getElementById("players").innerHTML = players.map((p, index) => `<li>${p} <button onclick="removePlayer('players', ${index})">Remover</button></li>`).join("");
+            document.getElementById("waitingList").innerHTML = waitingList.map((p, index) => `<li>${p} <button onclick="removePlayer('waitingList', ${index})">Remover</button></li>`).join("");
+        }
+
+        function removePlayer(listType, index) {
+            if (listType === "players") {
+                players.splice(index, 1);
+            } else {
+                waitingList.splice(index, 1);
+            }
+            updateLists();
+        }
+
+        function sortTeams() {
+            // Mescla as listas de jogadores confirmados e lista de espera
+            const allPlayers = [...players, ...waitingList];
+
+            if (allPlayers.length < 2) {
+                alert("São necessários pelo menos 2 jogadores para formar times.");
+                return;
+            }
+
+            const teamSize = 5; // Tamanho de cada time
+            const numTeams = Math.ceil(allPlayers.length / teamSize); // Calcula o número de times necessários
+            const shuffled = allPlayers.sort(() => Math.random() - 0.5);
+            const teams = [];
+
+            for (let i = 0; i < numTeams; i++) {
+                teams.push([]);
+            }
+
+            shuffled.forEach((player, index) => {
+                teams[index % numTeams].push(player);
+            });
+
+            // Limpa a exibição anterior dos times
+            document.getElementById("teams").innerHTML = "";
+
+            // Exibe os times na tela
+            for (let i = 0; i < numTeams; i++) {
+                const teamDiv = document.createElement("div");
+                teamDiv.className = "team";
+                teamDiv.innerHTML = `<h3>Time ${i + 1}</h3><ul id="team${i + 1}"></ul>`;
+                document.getElementById("teams").appendChild(teamDiv);
+
+                document.getElementById(`team${i + 1}`).innerHTML = teams[i].map(p => `<li>${p}</li>`).join("");
+            }
+
+            document.getElementById("teams").classList.remove("hidden");
+        }
+
+        function saveGame() {
+            document.getElementById("gameDate").innerText = document.getElementById("inputDate").value;
+            document.getElementById("gameTime").innerText = document.getElementById("inputTime").value;
+            document.getElementById("gameLocation").innerText = document.getElementById("inputLocation").value;
+        }
+
+        function checkAdmin() {
+            const code = prompt("Digite o código de administrador:");
+            if (code === adminCode) {
+                document.getElementById("admin").style.display = "block";
+            }
+        }
+
+        checkAdmin();
+    </script>
+</body>
+</html>
