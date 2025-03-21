@@ -34,7 +34,7 @@
     <button onclick="sortTeams()">Sortear Times</button>
 
     <div id="teams" class="hidden">
-        </div>
+    </div>
 
     <div id="admin">
         <h3>Configurar Jogo</h3>
@@ -77,7 +77,6 @@
         }
 
         function sortTeams() {
-            // Mescla as listas de jogadores confirmados e lista de espera
             const allPlayers = [...players, ...waitingList];
 
             if (allPlayers.length < 2) {
@@ -85,8 +84,8 @@
                 return;
             }
 
-            const teamSize = 5; // Tamanho de cada time
-            const numTeams = Math.ceil(allPlayers.length / teamSize); // Calcula o número de times necessários
+            const teamSize = 5;
+            const numTeams = Math.ceil(allPlayers.length / teamSize);
             const shuffled = allPlayers.sort(() => Math.random() - 0.5);
             const teams = [];
 
@@ -98,10 +97,8 @@
                 teams[index % numTeams].push(player);
             });
 
-            // Limpa a exibição anterior dos times
             document.getElementById("teams").innerHTML = "";
 
-            // Exibe os times na tela
             for (let i = 0; i < numTeams; i++) {
                 const teamDiv = document.createElement("div");
                 teamDiv.className = "team";
@@ -115,10 +112,31 @@
         }
 
         function saveGame() {
-            document.getElementById("gameDate").innerText = document.getElementById("inputDate").value;
-            document.getElementById("gameTime").innerText = document.getElementById("inputTime").value;
-            document.getElementById("gameLocation").innerText = document.getElementById("inputLocation").value;
+            const date = document.getElementById("inputDate").value;
+            const time = document.getElementById("inputTime").value;
+            const location = document.getElementById("inputLocation").value;
+
+            // Salva os dados no localStorage
+            localStorage.setItem("gameDate", date);
+            localStorage.setItem("gameTime", time);
+            localStorage.setItem("gameLocation", location);
+
+            // Exibe as informações na tela
+            document.getElementById("gameDate").innerText = date;
+            document.getElementById("gameTime").innerText = time;
+            document.getElementById("gameLocation").innerText = location;
         }
+
+        // Carrega os dados do localStorage ao carregar a página
+        window.onload = function() {
+            const savedDate = localStorage.getItem("gameDate");
+            const savedTime = localStorage.getItem("gameTime");
+            const savedLocation = localStorage.getItem("gameLocation");
+
+            if (savedDate) document.getElementById("gameDate").innerText = savedDate;
+            if (savedTime) document.getElementById("gameTime").innerText = savedTime;
+            if (savedLocation) document.getElementById("gameLocation").innerText = savedLocation;
+        };
 
         function checkAdmin() {
             const code = prompt("Digite o código de administrador:");
